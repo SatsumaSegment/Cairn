@@ -25,7 +25,6 @@
 
 .logo {
   height: 20em;
-  padding: 1em;
   will-change: filter;
   transition: 0.75s;
 }
@@ -33,6 +32,61 @@
 .row {
   display: flex;
   justify-content: center;
+}
+
+.contents {
+  display: flex;
+  margin: auto;
+  width: 80%;
+  height: 18em;
+  gap: 2em;
+  justify-content: center;
+  margin-top: 2em;
+}
+
+.create {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+}
+
+.create-btn {
+  height: 50px;
+  padding: 0 24px;
+  background-color: #e5a95c;
+  color: #1f1e1d;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(229, 169, 92, 0.25);
+  transition: all 0.2s ease;
+}
+
+.create-btn:hover {
+  background-color: #f0b86e;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(229, 169, 92, 0.35);
+}
+
+.create-btn:active {
+  transform: translateY(0);
+}
+
+.libs {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  height: 100%;
+  padding-inline: 5px;
+  border-left: 1px solid rgb(106, 104, 104);
 }
 
 @media (prefers-color-scheme: dark) {
