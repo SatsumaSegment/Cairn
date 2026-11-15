@@ -6,9 +6,18 @@ let createBtn;
 let cancelBtn;
 let nameInput;
 
+
 async function create_library(name) {
-  
+  try {
+    await invoke("create_library", { name: name });
+    
+    createModal.style.display = "none";
+    nameInput.value = "";
+  } catch (error) {
+    console.error("Failed to create library:", error);
+  }
 }
+
 
 window.addEventListener("DOMContentLoaded", () => {
   createNewBtn = document.querySelector(".create-new-btn");
@@ -27,7 +36,11 @@ window.addEventListener("DOMContentLoaded", () => {
   createBtn.addEventListener("click", () => {
     let name = nameInput.value;
     if (name.length == 0) {
-      return;
+      nameInput.classList.add("shake");
+
+      setTimeout(() => {
+        nameInput.classList.remove("shake");
+      }, 500);
     } else {
       create_library(name);
     }
