@@ -1,18 +1,35 @@
 const { invoke } = window.__TAURI__.core;
 
-let greetInputEl;
-let greetMsgEl;
+let createNewBtn;
+let createModal;
+let createBtn;
+let cancelBtn;
+let nameInput;
 
-async function greet() {
-  // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-  greetMsgEl.textContent = await invoke("greet", { name: greetInputEl.value });
+async function create_library(name) {
+  
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  greetInputEl = document.querySelector("#greet-input");
-  greetMsgEl = document.querySelector("#greet-msg");
-  document.querySelector("#greet-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    greet();
+  createNewBtn = document.querySelector(".create-new-btn");
+  createModal = document.querySelector(".create-modal");
+  createBtn = document.querySelector(".create-btn");
+  cancelBtn = document.querySelector(".cancel-btn");
+  nameInput = document.querySelector(".name-lib-input");
+
+  createNewBtn.addEventListener("click", () => {
+    createModal.style.display = "flex";
+  });
+  cancelBtn.addEventListener("click", () => {
+    createModal.style.display = "none";
+  });
+
+  createBtn.addEventListener("click", () => {
+    let name = nameInput.value;
+    if (name.length == 0) {
+      return;
+    } else {
+      create_library(name);
+    }
   });
 });

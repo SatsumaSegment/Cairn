@@ -51,7 +51,7 @@
   width: 50%;
 }
 
-.create-btn {
+.create-new-btn {
   height: 50px;
   padding: 0 24px;
   background-color: #e5a95c;
@@ -70,13 +70,13 @@
   transition: all 0.2s ease;
 }
 
-.create-btn:hover {
+.create-new-btn:hover {
   background-color: #f0b86e;
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(229, 169, 92, 0.35);
 }
 
-.create-btn:active {
+.create-new-btn:active {
   transform: translateY(0);
 }
 
@@ -87,6 +87,76 @@
   height: 100%;
   padding-inline: 5px;
   border-left: 1px solid rgb(106, 104, 104);
+}
+
+.create-modal {
+  display: none;
+  flex-direction: column;
+  gap: 1em;
+  justify-self: center;
+  align-self: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #2f2f2f;
+  padding-inline: 3em;
+  padding-block: 2em;
+  border: 2px solid black;
+  border-radius: 5%;
+  box-shadow: 10px 20px 20px rgba(8, 8, 8, 0.35);
+}
+
+.modal-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.modal-btns button {
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn {
+  background-color: transparent;
+  color: #b0a8a0;
+  border: 1px solid #4a4540;
+}
+
+.cancel-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #f3e9dc;
+  border-color: #6b635c;
+}
+
+.create-btn {
+  background-color: #e5a95c;
+  color: #1f1e1d;
+  border: none;
+  box-shadow: 0 2px 8px rgba(229, 169, 92, 0.2);
+}
+
+.create-btn:hover {
+  background-color: #f0b86e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(229, 169, 92, 0.3);
+}
+
+.create-btn:active,
+.cancel-btn:active {
+  transform: translateY(0);
+}
+
+
+.name-lib-input {
+  padding: 0.5em;
 }
 
 @media (prefers-color-scheme: dark) {
