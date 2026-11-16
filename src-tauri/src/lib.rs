@@ -1,7 +1,5 @@
-use std::{fs::{self, create_dir_all}, path::{PathBuf}};
-use std::ffi::OsStr;
+use std::{fs::{self, create_dir_all}, path::{PathBuf, Path}, ffi::OsStr};
 use tauri::Manager;
-use std::path::Path;
 
 #[tauri::command]
 fn create_library(app: tauri::AppHandle, name: String) -> bool {
@@ -24,7 +22,7 @@ fn create_library(app: tauri::AppHandle, name: String) -> bool {
 }
 
 
-fn extract_text(doc: String) -> Vec<String> {
+fn extract_text(doc: &str) -> Vec<String> {
     let ext = Path::new(&doc)
         .extension()
         .and_then(OsStr::to_str)
@@ -50,18 +48,42 @@ fn extract_text(doc: String) -> Vec<String> {
 }
 
 
-fn process_documents(docs: Vec<String>) {
-    for doc in docs {
-        let words = extract_text(doc);
-
-        let mut chunks: Vec<String>;
-        let mut current_chunk: Vec<String>;
-        let mut n: i32 = 0;
-        for word in words {
-
-        }
-    }
+fn embed_text(text: String) -> Vec<f32> {
+    vec![]
 }
+
+
+
+#[tauri::command]
+fn process_documents(docs: Vec<String>) -> Vec<(String, Vec<String>)> {
+    let mut processed_docs: Vec<(String, Vec<String>)> = vec![];
+    for doc in docs {
+        let words = extract_text(&doc);
+
+        let mut chunks: Vec<String> = vec![];
+        let mut current_chunk: Vec<String> = vec![];
+
+        for word in words {
+            if current_chunk.len() >= 200 && current_chunk.len() <= 500 &&
+            (word.ends_with('.') ||word.ends_with('!') || word.ends_with('?')) ||
+            ( current_chunk.len() >= 500) {
+                current_chunk.push(word);
+                chunks.push(current_chunk.join(" "));
+                current_chunk.drain(..current_chunk.len()-20);
+            } else {
+                current_chunk.push(word);
+            }
+        }
+
+        if !current_chunk.is_empty() {
+            chunks.push(current_chunk.join(" "));
+        }
+        processed_docs.push((doc, chunks));
+    }
+    processed_docs
+}
+
+
 
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -69,7 +91,12 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_fs::init())
-        .invoke_handler(tauri::generate_handler![create_library])
+        .plugin(tauri_plugin_dialog::init())
+        .invoke_handler(
+            tauri::generate_handler![
+                create_library, 
+                process_documents
+            ])
         .setup(|app| {
             let app_dir = app.path().app_data_dir().expect("failed to get app data dir");
             let _ = create_dir_all(app_dir);

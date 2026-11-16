@@ -185,9 +185,12 @@
   width: 120px;
   text-align: center;
   word-break: break-all;
+  cursor: pointer;
 }
 
-
+.lib-el:hover {
+  background-color: #e5a95c;
+}
 
 .hidden {
   display: none !important;
