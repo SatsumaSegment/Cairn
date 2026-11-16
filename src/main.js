@@ -100,6 +100,6 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
 
-
+  navigate('home-view');
   list_libraries();
 });
