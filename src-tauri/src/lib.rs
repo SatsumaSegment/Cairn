@@ -60,6 +60,8 @@ fn extract_text(doc: &str) -> Vec<String> {
 fn get_embedding_model() -> &'static Mutex<TextEmbedding> {
     static MODEL: OnceLock<Mutex<TextEmbedding>> = OnceLock::new();
     
+    println!("Getting embedding model...");
+
     MODEL.get_or_init(|| {
         let embedding_model = TextEmbedding::try_new(
             TextInitOptions::new(EmbeddingModel::AllMiniLML6V2)
@@ -75,14 +77,30 @@ fn embed_text(processed_docs: Vec<(String, Vec<String>)>) -> Vec<(String, Vec<St
     let model_mute = get_embedding_model();
     let mut embedded_docs: Vec<(String, Vec<String>, Vec<Vec<f32>>)> = vec![];
 
+    let batch_size = 32;
+
+    let mut n_batches = 1;
+
     for (path, chunks) in processed_docs {
         if chunks.is_empty() {
             embedded_docs.push((path, chunks, vec![]));
             continue;
         }
-        let mut model = model_mute.lock().expect("Embedding model mutex poisoned");
-        let chunk_embeddings = model.embed(chunks.clone(), None).expect("Failed to generate embeddings for document chunks");
-        embedded_docs.push((path, chunks, chunk_embeddings));
+
+        let mut all_chunk_embeddings = Vec::new();
+
+        for chunk_batch in chunks.chunks(batch_size) {
+            println!("Embedding batch #{}", n_batches);
+            let mut model = model_mute.lock().expect("Embedding model mutex poisoned");
+            
+            let batch_embeddings = model.embed(chunk_batch.to_vec(), None)
+                .expect("Failed to generate embeddings for document chunks");
+            
+            all_chunk_embeddings.extend(batch_embeddings);
+            n_batches += 1;
+        }
+
+        embedded_docs.push((path, chunks, all_chunk_embeddings));
     }
 
     embedded_docs
@@ -159,6 +177,8 @@ async fn store_embeddings(db: &lancedb::Connection, embedded_docs: Vec<(String, 
 async fn process_documents(state: tauri::State<'_, AppState>, docs: Vec<String>) -> Result<(), String> {
     let mut processed_docs: Vec<(String, Vec<String>)> = vec![];
     for doc in docs {
+        println!("Processing document: {}", &doc);
+
         let words = extract_text(&doc);
 
         let mut chunks: Vec<String> = vec![];
@@ -184,11 +204,12 @@ async fn process_documents(state: tauri::State<'_, AppState>, docs: Vec<String>)
     
     let embedded_docs: Vec<(String, Vec<String>, Vec<Vec<f32>>)> = embed_text(processed_docs);
 
+    println!("Storing embeddings...");
     if let Err(e) = store_embeddings(&state.db, embedded_docs).await {
         eprintln!("Failed to store embeddings in database: {}", e);
         Err(e)
     } else {
-        println!("Successfully saved embeddings to LanceDB!");
+        println!("Success!");
         Ok(())
     }
 
