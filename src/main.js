@@ -6,6 +6,20 @@ let createBtn;
 let cancelBtn;
 let nameInput;
 let libsBox;
+let libsList;
+let backBtn;
+
+
+function navigate(viewId) {
+  document.querySelectorAll('.view').forEach(view => {
+    view.classList.add('hidden');
+  });
+
+  const targetView = document.querySelector("."+viewId);
+  if (targetView) {
+    targetView.classList.remove('hidden');
+  }
+}
 
 
 async function list_libraries() {
@@ -19,7 +33,7 @@ async function list_libraries() {
       libsBox.innerHTML = "";
       for (const lib of libraries) {
         const lib_name = lib.name.replace(".json", "");
-        libsBox.insertAdjacentHTML('beforeend', `<p class="lib-el">${lib_name}</p>`);
+        libsBox.insertAdjacentHTML('beforeend', `<p class="lib-el" data-name="${lib_name}">${lib_name}</p>`);
       }
     }
     return [];
@@ -49,6 +63,8 @@ window.addEventListener("DOMContentLoaded", () => {
   cancelBtn = document.querySelector(".cancel-btn");
   nameInput = document.querySelector(".name-lib-input");
   libsBox = document.querySelector(".libs-list");
+  libsList = document.querySelector(".libs-list");
+  backBtn = document.querySelector('.back-btn');
 
   createNewBtn.addEventListener("click", () => {
     createModal.style.display = "flex";
@@ -70,5 +86,20 @@ window.addEventListener("DOMContentLoaded", () => {
       list_libraries();
     }
   });
+
+  libsList.addEventListener('click', (event) => {
+    const card = event.target.closest('.lib-el');
+    if (!card) return;
+    const libraryName = card.dataset.name;
+    navigate('workspace-view');
+  });
+
+
+  backBtn.addEventListener('click', () => {
+    navigate('home-view');
+  });
+
+
+
   list_libraries();
 });

@@ -11,33 +11,42 @@
   <body>
     <main class="container">
 
-      <div class="row">
-        <img src="/assets/cairn-mascot.png" class="logo" alt="Cairn logo" />
+      <div class="view home-view">
+        <div class="row">
+          <img src="/assets/cairn-mascot.png" class="logo" alt="Cairn logo" />
+        </div>
+
+        <h2>Your files. Your machine. Instant answers.</h2>
+
+        <div class="contents">
+          <div class="create">
+            <button class="create-new-btn">+ Create New Library</button>
+          </div>
+          <div class="libs">
+            <p class="libs-title">Your Libraries</p>
+            <div class="libs-list"></div>
+          </div>
+        </div>
+
+        <!-- Create library modal -->
+        <div class="create-modal">
+          <h4>Name Your Library</h4>
+          <input class="name-lib-input" type="text" placeholder="My Library">
+          <div class="modal-btns">
+            <button class="cancel-btn">Cancel</button>
+            <button class="create-btn">Create</button>
+          </div>
+        </div>
       </div>
 
-      <h2>Your files. Your machine. Instant answers.</h2>
 
-      <div class="contents">
-        <div class="create">
-          <button class="create-new-btn">+ Create New Library</button>
-        </div>
-        <div class="libs">
-          <p class="libs-title">Your Libraries</p>
-          <div class="libs-list"></div>
-        </div>
-      </div>
-
-
-      <!-- Create library modal -->
-      <div class="create-modal">
-        <h4>Name Your Library</h4>
-        <input class="name-lib-input" type="text" placeholder="My Library">
-        <div class="modal-btns">
-          <button class="cancel-btn">Cancel</button>
-          <button class="create-btn">Create</button>
-        </div>
+      <div class="view workspace-view">
+        <h1>Here we are.</h1>
+        <button class="back-btn"><-</button>    
       </div>
 
     </main>
+
+
   </body>
 </html>

@@ -187,6 +187,12 @@
   word-break: break-all;
 }
 
+
+
+.hidden {
+  display: none !important;
+}
+
 @keyframes shake {
   0% { translate: 0 0; }
   20% { translate: -8px 0; }
