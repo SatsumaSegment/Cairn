@@ -13,26 +13,26 @@
   <body>
     <main class="container">
 
-      <div class="view home-view">
+      <div class="view home-view no-select">
         <div class="row">
-          <img src="/assets/cairn-mascot.png" class="logo" alt="Cairn logo" />
+          <img src="/assets/cairn-mascot.png" draggable="false" class="logo" alt="Cairn logo" />
         </div>
 
-        <h2>Your files. Your machine. Instant answers.</h2>
+        <h2 class="no-select">Your files. Your machine. Instant answers.</h2>
 
         <div class="contents">
           <div class="create">
-            <button class="create-new-btn">+ Create New Library</button>
+            <button class="create-new-btn no-select">+ Create New Library</button>
           </div>
           <div class="libs">
-            <p class="libs-title">Your Libraries</p>
+            <p class="libs-title no-select">Your Libraries</p>
             <div class="libs-list"></div>
           </div>
         </div>
 
         <!-- Create library modal -->
         <div class="create-modal">
-          <h4>Name Your Library</h4>
+          <h4 class="no-select">Name Your Library</h4>
           <input class="name-lib-input" type="text" placeholder="My Library">
           <div class="modal-btns">
             <button class="cancel-btn">Cancel</button>
@@ -44,19 +44,22 @@
 
       <div id="workspace-view" class="view workspace-view hidden">
 
-        <aside class="workspace-sidebar" id="sidebar">
+        <aside class="workspace-sidebar no-select" id="sidebar">
           <div class="sidebar-top">
             <button class="back-btn" title="Back to Libraries">←</button>
-            <h3 id="active-library-title" class="sidebar-library-name">Library Name</h3>
+            <h3 id="active-library-title" class="sidebar-library-name no-select">Library Name</h3>
           </div>
+
+          <button class="upload-files-btn" id="uploadFilesBtn" type="button">Upload files</button>
 
           <div class="file-drop-zone" id="fileDropZone">
             <div class="drop-zone-content">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-              <p>Drag & drop files here</p>
-              <span class="sub-text">or click to browse</span>
+              <p class="no-select">Drag &amp; drop files here</p>
             </div>
-            <div class="uploaded-files-list" id="uploadedFilesList"></div>
+            <h4 class="document-list-title">Library documents</h4>
+            <div class="uploaded-files-list" id="uploadedFilesList" role="list" aria-label="Library documents"></div>
+            <p class="document-list-status" id="documentListStatus" role="status" aria-live="polite"></p>
           </div>
 
           <div class="sidebar-bottom">
@@ -77,6 +80,10 @@
           </div>
 
           <div class="chat-input-container">
+            <div class="chat-mode-toggle" role="group" aria-label="Chat mode">
+              <button class="chat-mode-option active" type="button" data-mode="chat" aria-pressed="true">Chat</button>
+              <button class="chat-mode-option" type="button" data-mode="search" aria-pressed="false">Search</button>
+            </div>
             <input type="text" class="chat-input" id="chatInput" placeholder="Ask a question about your files..." />
             <button class="send-btn" id="sendBtn">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
@@ -85,6 +92,65 @@
         </div>
 
       </div>
+
+      <dialog class="settings-dialog no-select" id="settingsDialog" aria-labelledby="settingsTitle">
+        <form class="settings-form" id="settingsForm">
+          <div class="settings-header">
+            <div>
+              <h2 id="settingsTitle">Workspace settings</h2>
+              <p>These options control document processing and search.</p>
+            </div>
+            <button class="settings-close-btn" id="closeSettingsBtn" type="button" aria-label="Close settings">×</button>
+          </div>
+
+          <label class="settings-field" for="embeddingModelName">
+            <span>Embedding model name</span>
+            <input id="embeddingModelName" name="embeddingModelName" type="text" list="embeddingModelOptions" required>
+            <datalist id="embeddingModelOptions"></datalist>
+            <small>Choose a supported FastEmbed model from the suggestions.</small>
+          </label>
+
+          <label class="settings-field" for="vectorDimensions">
+            <span>Vector dimensions</span>
+            <input id="vectorDimensions" name="vectorDimensions" type="number" min="1" step="1" required>
+            <small>Must match the selected embedding model.</small>
+          </label>
+
+          <label class="settings-field" for="llmModelName">
+            <span>LLM model name</span>
+            <input id="llmModelName" name="llmModelName" type="text" required>
+          </label>
+
+          <div class="settings-field-row">
+            <label class="settings-field" for="minChunkSize">
+              <span>Min chunk size (words)</span>
+              <input id="minChunkSize" name="minChunkSize" type="number" min="1" step="1" required>
+            </label>
+            <label class="settings-field" for="maxChunkSize">
+              <span>Max chunk size (words)</span>
+              <input id="maxChunkSize" name="maxChunkSize" type="number" min="1" step="1" required>
+            </label>
+          </div>
+
+          <label class="settings-checkbox" for="sentenceEnders">
+            <input id="sentenceEnders" name="sentenceEnders" type="checkbox">
+            <span>End chunks at sentence endings</span>
+          </label>
+
+          <label class="settings-field" for="maxResults">
+            <span>Max results</span>
+            <input id="maxResults" name="maxResults" type="number" min="1" max="100" step="1" required>
+          </label>
+
+          <p class="settings-note">Changing the embedding model or dimensions requires re-embedding existing documents.</p>
+          <p class="settings-error" id="settingsError" role="alert" hidden></p>
+
+          <div class="settings-actions">
+            <button class="settings-cancel-btn" id="cancelSettingsBtn" type="button">Cancel</button>
+            <button class="settings-save-btn" id="saveSettingsBtn" type="submit">Save settings</button>
+          </div>
+        </form>
+      </dialog>
 
 
 

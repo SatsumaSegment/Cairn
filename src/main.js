@@ -8,6 +8,7 @@ let nameInput;
 let libsBox;
 let libsList;
 let backBtn;
+let activeLibraryTitle;
 
 
 function navigate(viewId) {
@@ -33,7 +34,7 @@ async function list_libraries() {
       libsBox.innerHTML = "";
       for (const lib of libraries) {
         const lib_name = lib.name.replace(".json", "");
-        libsBox.insertAdjacentHTML('beforeend', `<p class="lib-el" data-name="${lib_name}">${lib_name}</p>`);
+        libsBox.insertAdjacentHTML('beforeend', `<p class="lib-el no-select" data-name="${lib_name}">${lib_name}</p>`);
       }
     }
     return [];
@@ -65,6 +66,7 @@ window.addEventListener("DOMContentLoaded", () => {
   libsBox = document.querySelector(".libs-list");
   libsList = document.querySelector(".libs-list");
   backBtn = document.querySelector('.back-btn');
+  activeLibraryTitle = document.querySelector("#active-library-title");
 
   createNewBtn.addEventListener("click", () => {
     createModal.style.display = "flex";
@@ -91,7 +93,10 @@ window.addEventListener("DOMContentLoaded", () => {
     const card = event.target.closest('.lib-el');
     if (!card) return;
     const libraryName = card.dataset.name;
+    activeLibraryTitle.textContent = libraryName;
+    activeLibraryTitle.dataset.name = libraryName;
     navigate('workspace-view');
+    window.dispatchEvent(new CustomEvent('library-selected', { detail: { library: libraryName } }));
   });
 
 

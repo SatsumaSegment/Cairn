@@ -1,4 +1,3 @@
-/* Make the workspace take up the entire window overlay */
 #workspace-view.view {
   position: absolute;
   top: 0;
@@ -8,12 +7,12 @@
   background-color: #222;
   display: flex;
   flex-direction: row;
-  z-index: 10; /* Ensures it sits on top of everything */
+  z-index: 10;
   box-sizing: border-box;
 }
 
-/* Left Sidebar Styles */
 .workspace-sidebar {
+  flex: 0 0 280px;
   width: 280px;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.2);
@@ -39,6 +38,24 @@
   overflow: hidden;
   text-overflow: ellipsis;
   margin: 0;
+}
+
+.upload-files-btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #f3b664;
+  color: #222;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.upload-files-btn:hover {
+  opacity: 0.9;
 }
 
 /* Back Button */
@@ -88,19 +105,26 @@
   justify-content: center;
   text-align: center;
   padding: 15px;
-  cursor: pointer;
   transition: border-color 0.2s, background-color 0.2s;
   position: relative;
   overflow-y: auto;
 }
 
-.file-drop-zone:hover, .file-drop-zone.dragover {
-  border-color: #f3b664;
-  background-color: rgba(243, 182, 100, 0.03);
+.document-list-title {
+  width: 100%;
+  margin: 8px 0 0;
+  color: #ddd;
+  font-size: 13px;
+  text-align: left;
 }
 
+/* .file-drop-zone:hover, .file-drop-zone.dragover {
+  border-color: #f3b664;
+  background-color: rgba(243, 182, 100, 0.03);
+} */
+
 .drop-zone-content {
-  color: #aaa;
+  color: #aaaaaa8b;
   font-size: 13px;
   display: flex;
   flex-direction: column;
@@ -109,7 +133,7 @@
 }
 
 .drop-zone-content svg {
-  stroke: #aaa;
+  stroke: #aaaaaa8b;
 }
 
 .sub-text {
@@ -122,6 +146,88 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  flex: 0 0 auto;
+  max-height: 45%;
+  overflow-y: auto;
+  padding-right: 2px;
+  box-sizing: border-box;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  padding: 7px 8px 7px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #ddd;
+  text-align: left;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.file-item:hover {
+  border-color: rgba(243, 182, 100, 0.3);
+  background: rgba(255, 255, 255, 0.075);
+}
+
+.file-item-name {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.remove-document-btn {
+  display: inline-flex;
+  flex: 0 0 24px;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #999;
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.15s, background-color 0.15s, border-color 0.15s;
+}
+
+.remove-document-btn:hover {
+  border-color: rgba(255, 115, 115, 0.25);
+  background: rgba(255, 95, 95, 0.12);
+  color: #ff9a9a;
+}
+
+.remove-document-btn:focus-visible {
+  outline: 2px solid #f3b664;
+  outline-offset: 1px;
+}
+
+.remove-document-btn:disabled {
+  cursor: wait;
+  opacity: 0.5;
+}
+
+.document-list-empty,
+.document-list-status {
+  width: 100%;
+  margin: 4px 0;
+  color: #888;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.document-list-status:not(:empty) {
+  color: #f0bf80;
 }
 
 /* Settings Button */
@@ -144,9 +250,176 @@
   color: #fff;
 }
 
+.settings-dialog {
+  width: min(480px, calc(100vw - 32px));
+  max-height: 85vh;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  background-color: #292929;
+  color: #f6f6f6;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+}
+
+.settings-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(2px);
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.settings-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 46px;
+}
+
+.settings-header > div {
+  width: 100%;
+}
+
+.settings-header h2 {
+  margin: 0 0 4px;
+  font-size: 20px;
+}
+
+.settings-header p,
+.settings-field small,
+.settings-note {
+  margin: 0;
+  color: #aaa;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.settings-close-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: #aaa;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.settings-close-btn:hover {
+  color: #fff;
+}
+
+.settings-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+  color: #ddd;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.settings-field input {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  background: #1d1d1d;
+  color: #fff;
+  font: inherit;
+  font-weight: 400;
+  box-sizing: border-box;
+}
+
+.settings-field input:focus {
+  border-color: #f3b664;
+  outline: 2px solid rgba(243, 182, 100, 0.25);
+}
+
+.settings-field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.settings-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #ddd;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.settings-checkbox input {
+  accent-color: #f3b664;
+}
+
+.settings-note {
+  padding: 9px 10px;
+  border-left: 2px solid #f3b664;
+  background: rgba(243, 182, 100, 0.06);
+}
+
+.settings-error {
+  margin: 0;
+  color: #ff9a9a;
+  font-size: 13px;
+}
+
+.settings-error[hidden] {
+  display: none;
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.settings-actions button {
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.settings-cancel-btn {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: transparent;
+  color: #ddd;
+}
+
+.settings-save-btn {
+  border: 0;
+  background: #f3b664;
+  color: #222;
+}
+
+.settings-actions button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
 /* Main Chat Area */
 .workspace-main {
   flex-grow: 1;
+  min-width: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -185,6 +458,75 @@
   font-weight: 500;
 }
 
+.chat-search-result {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-left: 2px solid #f3b664;
+  background-color: rgba(0, 0, 0, 0.18);
+}
+
+.chat-search-result p {
+  margin: 0;
+}
+
+.chat-search-source {
+  margin-bottom: 6px !important;
+  color: #f3b664;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.chat-search-text {
+  color: #ddd;
+  white-space: pre-wrap;
+}
+
+.chat-answer-text {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 20px;
+}
+
+.typing-indicator span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #f3b664;
+  animation: typing-dot 1.2s ease-in-out infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes typing-dot {
+  0%, 60%, 100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typing-indicator span {
+    animation: none;
+    opacity: 0.7;
+  }
+}
+
 /* Chat Input Bar */
 .chat-input-container {
   display: flex;
@@ -194,6 +536,43 @@
   border-radius: 12px;
   padding: 8px 12px;
   align-items: center;
+}
+
+.chat-mode-toggle {
+  display: flex;
+  flex: 0 0 auto;
+  padding: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9px;
+  background-color: rgba(0, 0, 0, 0.24);
+}
+
+.chat-mode-option {
+  padding: 7px 11px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #aaa;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s, background-color 0.2s, box-shadow 0.2s;
+}
+
+.chat-mode-option:hover {
+  color: #fff;
+}
+
+.chat-mode-option.active {
+  background-color: #f3b664;
+  color: #222;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.chat-mode-option:focus-visible {
+  outline: 2px solid #f3b664;
+  outline-offset: 2px;
 }
 
 .chat-input {
@@ -225,4 +604,9 @@
 
 .send-btn:hover {
   opacity: 0.9;
+}
+
+.send-btn:disabled {
+  cursor: wait;
+  opacity: 0.55;
 }
