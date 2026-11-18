@@ -1,4 +1,4 @@
-use std::{fs::{self, create_dir_all}, path::{PathBuf, Path}, ffi::OsStr, str::FromStr, sync::{OnceLock, Mutex, Arc}};
+use std::{fs::{self, create_dir_all}, path::{PathBuf, Path}, ffi::OsStr, str::FromStr, sync::{OnceLock, Mutex, Arc}, time::Instant};
 use std::collections::BTreeSet;
 use fastembed::{TextEmbedding, TextInitOptions, EmbeddingModel};
 use lancedb::arrow::arrow_array::{Float32Array, StringArray, RecordBatch, FixedSizeListArray};
@@ -205,9 +205,11 @@ fn embed_text(
 ) -> Result<Vec<(String, Vec<String>, Vec<Vec<f32>>)>, String> {
     let mut embedded_docs: Vec<(String, Vec<String>, Vec<Vec<f32>>)> = vec![];
 
-    let batch_size = 32;
+    let batch_size = 64;
 
-    let mut n_batches = 1;
+    // let mut n_batches = 1;
+
+    let start_time = Instant::now();
 
     for (path, chunks) in processed_docs {
         if chunks.is_empty() {
@@ -215,20 +217,23 @@ fn embed_text(
             continue;
         }
 
-        let mut all_chunk_embeddings = Vec::new();
+        let mut all_chunk_embeddings = Vec::with_capacity(chunks.len());
 
         for chunk_batch in chunks.chunks(batch_size) {
-            println!("Embedding batch #{}", n_batches);
+            // println!("Embedding batch #{}", n_batches);
             let batch_embeddings = with_embedding_model(model_name, |model| {
-                model.embed(chunk_batch.to_vec(), None).map_err(|error| error.to_string())
+                model.embed(chunk_batch, None).map_err(|error| error.to_string())
             })?;
             
             all_chunk_embeddings.extend(batch_embeddings);
-            n_batches += 1;
+            // n_batches += 1;
         }
 
         embedded_docs.push((path, chunks, all_chunk_embeddings));
     }
+
+    let duration = start_time.elapsed();
+    println!("Total embedding time: {:.2}s", duration.as_secs_f64());
 
     Ok(embedded_docs)
 }

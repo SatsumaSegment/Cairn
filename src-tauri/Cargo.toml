@@ -30,6 +30,7 @@ futures = "0.3.34"
 ollama-rs = { version = "0.3.6", features = ["stream"] }
 tokio = "1.54.1"
 tokio-stream = "0.1.19"
+rayon = "1.12.0"
 
 
 # Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
